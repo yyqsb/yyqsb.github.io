@@ -68,6 +68,12 @@
             display: flex;
             align-items: center;
         }
+        .btn-loop, .btn-single-loop {
+            margin-left: 5px;
+        }
+        .btn-active {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +83,10 @@
             <div id="navigation">
                 <!-- Navigation buttons will be inserted here by JavaScript -->
             </div>
+            <div id="controls">
+                <button id="btnLoop" class="btn btn-custom btn-active" onclick="toggleLoop()">循环播放</button>
+                <button id="btnSingleLoop" class="btn btn-custom" onclick="toggleSingleLoop()">单曲循环</button>
+            </div>
         </div>
         <div id="file-list">
             <!-- File list will be inserted here by JavaScript -->
@@ -84,7 +94,6 @@
     </div>
 
     <script>
-        // Sample data for demonstration purposes
         const files = [
     {
         "name": "Aaron Smith - Dancin (Krono Extended Remix).mp3",
@@ -734,6 +743,8 @@
 ];
 
         let currentIndex = 0;
+        let isLooping = true; // Default is looping playback
+        let isSingleLoop = false;
 
         function renderNavigation() {
             let navigationHtml = '';
@@ -767,21 +778,40 @@
             loader.parentNode.appendChild(audioElement);
             loader.style.display = 'none'; // Hide loader when audio is added
 
-            // Play the audio
             audioElement.play();
 
-            // Add event listener to play the next audio file when the current one ends
             audioElement.addEventListener('ended', () => {
-                playNext(index);
+                if (isSingleLoop) {
+                    audioElement.currentTime = 0; // Restart the current song
+                    audioElement.play();
+                } else {
+                    playNext(index);
+                }
             });
         }
 
         function playNext(currentIndex) {
-            const nextIndex = (currentIndex + 1) % files.length; // Loop back to the first file
-            const nextAudioElement = document.querySelector(`#file-list .audio-player:nth-child(${nextIndex + 1}) audio`);
-            if (nextAudioElement) {
-                nextAudioElement.play();
+            if (isLooping) {
+                const nextIndex = (currentIndex + 1) % files.length; // Loop back to the first file
+                const nextAudioElement = document.querySelector(`#file-list .audio-player:nth-child(${nextIndex + 1}) audio`);
+                if (nextAudioElement) {
+                    nextAudioElement.play();
+                }
             }
+        }
+
+        function toggleLoop() {
+            isLooping = true;
+            isSingleLoop = false;
+            document.getElementById('btnLoop').classList.add('btn-active');
+            document.getElementById('btnSingleLoop').classList.remove('btn-active');
+        }
+
+        function toggleSingleLoop() {
+            isSingleLoop = true;
+            isLooping = false;
+            document.getElementById('btnLoop').classList.remove('btn-active');
+            document.getElementById('btnSingleLoop').classList.add('btn-active');
         }
 
         function navigateTo(path) {
@@ -795,3 +825,4 @@
     </script>
 </body>
 </html>
+
