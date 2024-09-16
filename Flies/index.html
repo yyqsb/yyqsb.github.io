@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件目录</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn-custom {
+            margin: 5px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .list-group-item {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .list-group-item a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .list-group-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>文件目录</h1>
+            <div id="navigation">
+                <!-- Navigation buttons will be inserted here by JavaScript -->
+            </div>
+        </div>
+        <div id="file-list" class="list-group">
+            <!-- File list will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration purposes
+        const currentPath = '/'; // Current directory path
+        const rootPath = '/';
+        const parentPath = '..'; // Example parent path (up one level)
+
+        const files = [
+            { name: 'Everything-1.4.1.1026.x64-Setup.exe', type: 'file', path: 'Everything-1.4.1.1026.x64-Setup.exe' },
+            { name: 'geek.exe', type: 'file', path: 'geek.exe' },
+            { name: 'Hide.me.exe', type: 'file', path: 'Hide.me.exe' },
+            { name: 'HMCL.exe', type: 'file', path: 'HMCL.exe' },
+            { name: 'MeltdownDFC.exe', type: 'file', path: 'MeltdownDFC.exe' },
+            { name: 'NSudo.exe', type: 'file', path: 'NSudo.exe' },
+            { name: '注册表对比工具.exe', type: 'file', path: '注册表对比工具.exe' },
+            //{ name: '目录2', type: 'directory', path: 'folder2/' }
+        ];
+
+        function renderNavigation() {
+            let navigationHtml = '';
+            if (currentPath !== rootPath) {
+                navigationHtml += `<a href="#" class="btn btn-custom" onclick="navigateTo('${parentPath}')">返回上一级</a>`;
+            }
+            navigationHtml += `<a href="#" class="btn btn-custom" onclick="navigateTo('${rootPath}')">根目录</a>`;
+            document.getElementById('navigation').innerHTML = navigationHtml;
+        }
+
+        function renderFileList() {
+            let fileListHtml = '';
+            files.forEach(file => {
+                if (file.type === 'file') {
+                    fileListHtml += `<a href="${file.path}" class="list-group-item" download>${file.name}</a>`;
+                } else {
+                    fileListHtml += `<a href="${file.path}" class="list-group-item">${file.name}</a>`;
+                }
+            });
+            document.getElementById('file-list').innerHTML = fileListHtml;
+        }
+
+        function navigateTo(path) {
+            // This function should handle actual navigation logic
+            // For this example, it simply reloads the page
+            location.href = path;
+        }
+
+        // Initialize the page
+        renderNavigation();
+        renderFileList();
+    </script>
+</body>
+</html>
