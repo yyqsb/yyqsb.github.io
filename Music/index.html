@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐目录</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .btn-custom {
+            margin: 5px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+        }
+        .list-group-item {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .list-group-item a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .list-group-item a:hover {
+            text-decoration: underline;
+        }
+        .audio-player {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .audio-player audio {
+            width: 100%;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>音乐目录</h1>
+            <div id="navigation">
+                <!-- Navigation buttons will be inserted here by JavaScript -->
+            </div>
+        </div>
+        <div id="file-list">
+            <!-- File list will be inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration purposes
+        const files = [
+    {
+        "name": "Aaron Smith - Dancin (Krono Extended Remix).mp3",
+        "type": "file",
+        "path": ".\\Aaron Smith - Dancin (Krono Extended Remix).mp3"
+    },
+    {
+        "name": "Acreix - Visions.mp3",
+        "type": "file",
+        "path": ".\\Acreix - Visions.mp3"
+    },
+    {
+        "name": "Adam Christopher - So Far Away (Acoustic).mp3",
+        "type": "file",
+        "path": ".\\Adam Christopher - So Far Away (Acoustic).mp3"
+    },
+    {
+        "name": "Alan Walker - Alone.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker - Alone.mp3"
+    },
+    {
+        "name": "Alan Walker - Faded.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker - Faded.mp3"
+    },
+    {
+        "name": "Alan Walker,Au／Ra,Tomine Harket - Darkside.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Au／Ra,Tomine Harket - Darkside.mp3"
+    },
+    {
+        "name": "Alan Walker,Coldplay - Hymn For The Weekend（Remix）.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Coldplay - Hymn For The Weekend（Remix）.mp3"
+    },
+    {
+        "name": "Alan Walker,Iselin Solheim - Sing Me to Sleep.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Iselin Solheim - Sing Me to Sleep.mp3"
+    },
+    {
+        "name": "Alan Walker,MRD - Wake Up (feat. MRD).mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,MRD - Wake Up (feat. MRD).mp3"
+    },
+    {
+        "name": "Alan Walker,Noah Cyrus,Digital Farm Animals - All Falls Down.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Noah Cyrus,Digital Farm Animals - All Falls Down.mp3"
+    },
+    {
+        "name": "Alan Walker,Sabrina Carpenter,Farruko - On My Way.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Sabrina Carpenter,Farruko - On My Way.mp3"
+    },
+    {
+        "name": "Alan Walker,Sia - Move Your Body (Alan Walker Remix).mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Sia - Move Your Body (Alan Walker Remix).mp3"
+    },
+    {
+        "name": "Alan Walker,Sorana - Lost Control.mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,Sorana - Lost Control.mp3"
+    },
+    {
+        "name": "Alan Walker,宋雨琦,JVKE - Fire! (feat. YUQI ((G)I-DLE), JVKE).mp3",
+        "type": "file",
+        "path": ".\\Alan Walker,宋雨琦,JVKE - Fire! (feat. YUQI ((G)I-DLE), JVKE).mp3"
+    },
+    {
+        "name": "Alessia Cara - Scars To Your Beautiful.mp3",
+        "type": "file",
+        "path": ".\\Alessia Cara - Scars To Your Beautiful.mp3"
+    },
+    {
+        "name": "Alexandra Stan,Manilla Maniacs - All My People (Extended Version).mp3",
+        "type": "file",
+        "path": ".\\Alexandra Stan,Manilla Maniacs - All My People (Extended Version).mp3"
+    },
+    {
+        "name": "AnDyWuMUSICLAND Worry Free Studios - Something Just Like This(Megamix).mp3",
+        "type": "file",
+        "path": ".\\AnDyWuMUSICLAND Worry Free Studios - Something Just Like This(Megamix).mp3"
+    },
+    {
+        "name": "Avicii - Waiting For Love.mp3",
+        "type": "file",
+        "path": ".\\Avicii - Waiting For Love.mp3"
+    },
+    {
+        "name": "Avicii,Sandro Cavazza - Without You.mp3",
+        "type": "file",
+        "path": ".\\Avicii,Sandro Cavazza - Without You.mp3"
+    },
+    {
+        "name": "BeMax - Sea of Tranquility.mp3",
+        "type": "file",
+        "path": ".\\BeMax - Sea of Tranquility.mp3"
+    },
+    {
+        "name": "Breathe Carolina,Dropgun,Kaleena Zanders - Sweet Dreams (Mixed).mp3",
+        "type": "file",
+        "path": ".\\Breathe Carolina,Dropgun,Kaleena Zanders - Sweet Dreams (Mixed).mp3"
+    },
+    {
+        "name": "Broiler Imagine Dragons - Shots (Broiler Remix).mp3",
+        "type": "file",
+        "path": ".\\Broiler Imagine Dragons - Shots (Broiler Remix).mp3"
+    },
+    {
+        "name": "Cafuné - Tek It.mp3",
+        "type": "file",
+        "path": ".\\Cafuné - Tek It.mp3"
+    },
+    {
+        "name": "Calvin Harris,Ellie Goulding - Outside.mp3",
+        "type": "file",
+        "path": ".\\Calvin Harris,Ellie Goulding - Outside.mp3"
+    },
+    {
+        "name": "Capo Productions - Journey.mp3",
+        "type": "file",
+        "path": ".\\Capo Productions - Journey.mp3"
+    },
+    {
+        "name": "Cody Sorenson,Kadenza - Starset.mp3",
+        "type": "file",
+        "path": ".\\Cody Sorenson,Kadenza - Starset.mp3"
+    },
+    {
+        "name": "Coldplay - Viva La Vida.mp3",
+        "type": "file",
+        "path": ".\\Coldplay - Viva La Vida.mp3"
+    },
+    {
+        "name": "Dash Berlin,Bo Bruce - Coming Home.mp3",
+        "type": "file",
+        "path": ".\\Dash Berlin,Bo Bruce - Coming Home.mp3"
+    },
+    {
+        "name": "Dirty Palm,Conor Ross,Chandler Blasé - Flowers.mp3",
+        "type": "file",
+        "path": ".\\Dirty Palm,Conor Ross,Chandler Blasé - Flowers.mp3"
+    },
+    {
+        "name": "DJ Okawari - Luv Letter.mp3",
+        "type": "file",
+        "path": ".\\DJ Okawari - Luv Letter.mp3"
+    },
+    {
+        "name": "Dripice - Escape.mp3",
+        "type": "file",
+        "path": ".\\Dripice - Escape.mp3"
+    },
+    {
+        "name": "Dylan Matthew,SLANDER - Love Is Gone (Acoustic).mp3",
+        "type": "file",
+        "path": ".\\Dylan Matthew,SLANDER - Love Is Gone (Acoustic).mp3"
+    },
+    {
+        "name": "Egzod,Aotu - Celestial.mp3",
+        "type": "file",
+        "path": ".\\Egzod,Aotu - Celestial.mp3"
+    },
+    {
+        "name": "Egzod,EMM - Don't Surrender.mp3",
+        "type": "file",
+        "path": ".\\Egzod,EMM - Don't Surrender.mp3"
+    },
+    {
+        "name": "Egzod,EMM - Game Over.mp3",
+        "type": "file",
+        "path": ".\\Egzod,EMM - Game Over.mp3"
+    },
+    {
+        "name": "Egzod,Justin J. Moore - Stars.mp3",
+        "type": "file",
+        "path": ".\\Egzod,Justin J. Moore - Stars.mp3"
+    },
+    {
+        "name": "Egzod,Maestro Chives,Alaina Cross - No Rival.mp3",
+        "type": "file",
+        "path": ".\\Egzod,Maestro Chives,Alaina Cross - No Rival.mp3"
+    },
+    {
+        "name": "Egzod,Maestro Chives,Neoni - Royalty.mp3",
+        "type": "file",
+        "path": ".\\Egzod,Maestro Chives,Neoni - Royalty.mp3"
+    },
+    {
+        "name": "Egzod,Sarah De Warren - Wildfire.mp3",
+        "type": "file",
+        "path": ".\\Egzod,Sarah De Warren - Wildfire.mp3"
+    },
+    {
+        "name": "EKKSTACY - i walk this earth all by myself.mp3",
+        "type": "file",
+        "path": ".\\EKKSTACY - i walk this earth all by myself.mp3"
+    },
+    {
+        "name": "Ellie Goulding - Lights (Single Version).mp3",
+        "type": "file",
+        "path": ".\\Ellie Goulding - Lights (Single Version).mp3"
+    },
+    {
+        "name": "Ellie Goulding - Still Falling for You.mp3",
+        "type": "file",
+        "path": ".\\Ellie Goulding - Still Falling for You.mp3"
+    },
+    {
+        "name": "Eugene Star - Arabian Adventure(New Mix1).mp3",
+        "type": "file",
+        "path": ".\\Eugene Star - Arabian Adventure(New Mix1).mp3"
+    },
+    {
+        "name": "Fall Out Boy - Centuries.mp3",
+        "type": "file",
+        "path": ".\\Fall Out Boy - Centuries.mp3"
+    },
+    {
+        "name": "Feint - My Sunset.mp3",
+        "type": "file",
+        "path": ".\\Feint - My Sunset.mp3"
+    },
+    {
+        "name": "Feint - Stray.mp3",
+        "type": "file",
+        "path": ".\\Feint - Stray.mp3"
+    },
+    {
+        "name": "Feint - Weavers.mp3",
+        "type": "file",
+        "path": ".\\Feint - Weavers.mp3"
+    },
+    {
+        "name": "Feint,Veela - Vagrant.mp3",
+        "type": "file",
+        "path": ".\\Feint,Veela - Vagrant.mp3"
+    },
+    {
+        "name": "FrogMonster 蛙蛙 - Alone.mp3",
+        "type": "file",
+        "path": ".\\FrogMonster 蛙蛙 - Alone.mp3"
+    },
+    {
+        "name": "FrogMonster 蛙蛙 - Remember Our Summer.mp3",
+        "type": "file",
+        "path": ".\\FrogMonster 蛙蛙 - Remember Our Summer.mp3"
+    },
+    {
+        "name": "GTR7 - GoneBad(PHONK).mp3",
+        "type": "file",
+        "path": ".\\GTR7 - GoneBad(PHONK).mp3"
+    },
+    {
+        "name": "Hayden James,Boy Matthews - Just Friends.mp3",
+        "type": "file",
+        "path": ".\\Hayden James,Boy Matthews - Just Friends.mp3"
+    },
+    {
+        "name": "Hi Noise - Want U More (Radio Edit).mp3",
+        "type": "file",
+        "path": ".\\Hi Noise - Want U More (Radio Edit).mp3"
+    },
+    {
+        "name": "Hi Noise - We Never.mp3",
+        "type": "file",
+        "path": ".\\Hi Noise - We Never.mp3"
+    },
+    {
+        "name": "Hillsong Young & Free - Wake (Live).mp3",
+        "type": "file",
+        "path": ".\\Hillsong Young & Free - Wake (Live).mp3"
+    },
+    {
+        "name": "Hongzhe_Cui - Void.mp3",
+        "type": "file",
+        "path": ".\\Hongzhe_Cui - Void.mp3"
+    },
+    {
+        "name": "ILLENIUM,Phoebe Ryan - Mine (Illenium Remix).mp3",
+        "type": "file",
+        "path": ".\\ILLENIUM,Phoebe Ryan - Mine (Illenium Remix).mp3"
+    },
+    {
+        "name": "Intelligency - August.mp3",
+        "type": "file",
+        "path": ".\\Intelligency - August.mp3"
+    },
+    {
+        "name": "IRXD7,Leaf,Sail - Feel Right Now.mp3",
+        "type": "file",
+        "path": ".\\IRXD7,Leaf,Sail - Feel Right Now.mp3"
+    },
+    {
+        "name": "Jaymes Young - Infinity.mp3",
+        "type": "file",
+        "path": ".\\Jaymes Young - Infinity.mp3"
+    },
+    {
+        "name": "Jonasu - Black Magic.mp3",
+        "type": "file",
+        "path": ".\\Jonasu - Black Magic.mp3"
+    },
+    {
+        "name": "Justin Bieber,Daniel Caesar,Giveon - Peaches.mp3",
+        "type": "file",
+        "path": ".\\Justin Bieber,Daniel Caesar,Giveon - Peaches.mp3"
+    },
+    {
+        "name": "Jutidy - part of me - Sped Up.mp3",
+        "type": "file",
+        "path": ".\\Jutidy - part of me - Sped Up.mp3"
+    },
+    {
+        "name": "K-391,Alan Walker,Julie Bergan - Ignite.mp3",
+        "type": "file",
+        "path": ".\\K-391,Alan Walker,Julie Bergan - Ignite.mp3"
+    },
+    {
+        "name": "K-391,Alan Walker,Tungevaag - Play.mp3",
+        "type": "file",
+        "path": ".\\K-391,Alan Walker,Tungevaag - Play.mp3"
+    },
+    {
+        "name": "Kartashow,Mari Kraymbrery,Ramirez - Золото (Ramirez Remix).mp3",
+        "type": "file",
+        "path": ".\\Kartashow,Mari Kraymbrery,Ramirez - Золото (Ramirez Remix).mp3"
+    },
+    {
+        "name": "KASTRA - Fool For You.mp3",
+        "type": "file",
+        "path": ".\\KASTRA - Fool For You.mp3"
+    },
+    {
+        "name": "Kordhell - FATALITY.mp3",
+        "type": "file",
+        "path": ".\\Kordhell - FATALITY.mp3"
+    },
+    {
+        "name": "Kordhell - MURDER PLOT.mp3",
+        "type": "file",
+        "path": ".\\Kordhell - MURDER PLOT.mp3"
+    },
+    {
+        "name": "Kygo,Selena Gomez - It Ain't Me.mp3",
+        "type": "file",
+        "path": ".\\Kygo,Selena Gomez - It Ain't Me.mp3"
+    },
+    {
+        "name": "Lindsey Stirling - Underground.mp3",
+        "type": "file",
+        "path": ".\\Lindsey Stirling - Underground.mp3"
+    },
+    {
+        "name": "Lindsey Stirling,Lzzy Hale - Shatter Me.mp3",
+        "type": "file",
+        "path": ".\\Lindsey Stirling,Lzzy Hale - Shatter Me.mp3"
+    },
+    {
+        "name": "LJY - Autumn （秋）.mp3",
+        "type": "file",
+        "path": ".\\LJY - Autumn （秋）.mp3"
+    },
+    {
+        "name": "Lost Frequencies,Janieck - Reality.mp3",
+        "type": "file",
+        "path": ".\\Lost Frequencies,Janieck - Reality.mp3"
+    },
+    {
+        "name": "Lost Sky - Fearless.mp3",
+        "type": "file",
+        "path": ".\\Lost Sky - Fearless.mp3"
+    },
+    {
+        "name": "Lx24 Relanium Dj Prezzplay Deen West - Мокрые губы (Relanium, Prezzplay, Deen West Radio Remix).mp3",
+        "type": "file",
+        "path": ".\\Lx24 Relanium Dj Prezzplay Deen West - Мокрые губы (Relanium, Prezzplay, Deen West Radio Remix).mp3"
+    },
+    {
+        "name": "m-taku - Komorebi.mp3",
+        "type": "file",
+        "path": ".\\m-taku - Komorebi.mp3"
+    },
+    {
+        "name": "Marshmello - Alone.mp3",
+        "type": "file",
+        "path": ".\\Marshmello - Alone.mp3"
+    },
+    {
+        "name": "Martin Garrix Clinton Kane Alle Farben - Drown (feat. Clinton Kane) (Alle Farben Remix).mp3",
+        "type": "file",
+        "path": ".\\Martin Garrix Clinton Kane Alle Farben - Drown (feat. Clinton Kane) (Alle Farben Remix).mp3"
+    },
+    {
+        "name": "Matte,Ember Island - Umbrella (Matte Remix).mp3",
+        "type": "file",
+        "path": ".\\Matte,Ember Island - Umbrella (Matte Remix).mp3"
+    },
+    {
+        "name": "Max Elto - Shadow of the Sun.mp3",
+        "type": "file",
+        "path": ".\\Max Elto - Shadow of the Sun.mp3"
+    },
+    {
+        "name": "Mendus,GTA,Sam Bruno - Red Lips (Mendus Remix).mp3",
+        "type": "file",
+        "path": ".\\Mendus,GTA,Sam Bruno - Red Lips (Mendus Remix).mp3"
+    },
+    {
+        "name": "Michael Schulte - Back to the Start.mp3",
+        "type": "file",
+        "path": ".\\Michael Schulte - Back to the Start.mp3"
+    },
+    {
+        "name": "MiyaGi,Эндшпиль,Wooshendoo - #тамада (Сингл).mp3",
+        "type": "file",
+        "path": ".\\MiyaGi,Эндшпиль,Wooshendoo - #тамада (Сингл).mp3"
+    },
+    {
+        "name": "MiyaGi,Эндшпиль,Рем Дигга - I Got Love.mp3",
+        "type": "file",
+        "path": ".\\MiyaGi,Эндшпиль,Рем Дигга - I Got Love.mp3"
+    },
+    {
+        "name": "Monk - Hey Mama.mp3",
+        "type": "file",
+        "path": ".\\Monk - Hey Mama.mp3"
+    },
+    {
+        "name": "Ni／Co - Bleeding Love.mp3",
+        "type": "file",
+        "path": ".\\Ni／Co - Bleeding Love.mp3"
+    },
+    {
+        "name": "Parx,NONO - Feel Right Now (feat. Nonô).mp3",
+        "type": "file",
+        "path": ".\\Parx,NONO - Feel Right Now (feat. Nonô).mp3"
+    },
+    {
+        "name": "Pascal Letoublon,Leony - Friendships (Lost My Love).mp3",
+        "type": "file",
+        "path": ".\\Pascal Letoublon,Leony - Friendships (Lost My Love).mp3"
+    },
+    {
+        "name": "Pearl - I'll Be Waiting.mp3",
+        "type": "file",
+        "path": ".\\Pearl - I'll Be Waiting.mp3"
+    },
+    {
+        "name": "pluko,ye.,Egzod - Feel the Fire (Egzod Remix).mp3",
+        "type": "file",
+        "path": ".\\pluko,ye.,Egzod - Feel the Fire (Egzod Remix).mp3"
+    },
+    {
+        "name": "Qperkz - Lightning Moment（piano version）.mp3",
+        "type": "file",
+        "path": ".\\Qperkz - Lightning Moment（piano version）.mp3"
+    },
+    {
+        "name": "Raven & Kreyn,Nino Lucarelli,RudeLies - This Far (RudeLies Remix).mp3",
+        "type": "file",
+        "path": ".\\Raven & Kreyn,Nino Lucarelli,RudeLies - This Far (RudeLies Remix).mp3"
+    },
+    {
+        "name": "Rentz - Alone.mp3",
+        "type": "file",
+        "path": ".\\Rentz - Alone.mp3"
+    },
+    {
+        "name": "Robin Hustin TobiMorrow Jex - Light It Up.mp3",
+        "type": "file",
+        "path": ".\\Robin Hustin TobiMorrow Jex - Light It Up.mp3"
+    },
+    {
+        "name": "Shane 54 Cubicore Eric Lumiere Sagan - Out of Time (feat. Eric Lumiere) ［Sagan Remix］.mp3",
+        "type": "file",
+        "path": ".\\Shane 54 Cubicore Eric Lumiere Sagan - Out of Time (feat. Eric Lumiere) ［Sagan Remix］.mp3"
+    },
+    {
+        "name": "Sia - Unstoppable.mp3",
+        "type": "file",
+        "path": ".\\Sia - Unstoppable.mp3"
+    },
+    {
+        "name": "SKFM - SPIRIT RAVE.mp3",
+        "type": "file",
+        "path": ".\\SKFM - SPIRIT RAVE.mp3"
+    },
+    {
+        "name": "Smare - Arvb.mp3",
+        "type": "file",
+        "path": ".\\Smare - Arvb.mp3"
+    },
+    {
+        "name": "STRLGHT,Roonin - BACK2BACK.mp3",
+        "type": "file",
+        "path": ".\\STRLGHT,Roonin - BACK2BACK.mp3"
+    },
+    {
+        "name": "SUNAMI - Под луной (Silver Ace remix).mp3",
+        "type": "file",
+        "path": ".\\SUNAMI - Под луной (Silver Ace remix).mp3"
+    },
+    {
+        "name": "T3nzu - Drive Forever.mp3",
+        "type": "file",
+        "path": ".\\T3nzu - Drive Forever.mp3"
+    },
+    {
+        "name": "Tanir,Tyomcha,Mikis - Да Да Да（Da Da Da)(Remix by Mikis).mp3",
+        "type": "file",
+        "path": ".\\Tanir,Tyomcha,Mikis - Да Да Да（Da Da Da)(Remix by Mikis).mp3"
+    },
+    {
+        "name": "Taylor Swift - Love Story.mp3",
+        "type": "file",
+        "path": ".\\Taylor Swift - Love Story.mp3"
+    },
+    {
+        "name": "Taylor Swift - Style.mp3",
+        "type": "file",
+        "path": ".\\Taylor Swift - Style.mp3"
+    },
+    {
+        "name": "The Chainsmokers - Paris.mp3",
+        "type": "file",
+        "path": ".\\The Chainsmokers - Paris.mp3"
+    },
+    {
+        "name": "The Chainsmokers,Coldplay - Something Just Like This.mp3",
+        "type": "file",
+        "path": ".\\The Chainsmokers,Coldplay - Something Just Like This.mp3"
+    },
+    {
+        "name": "The Chainsmokers,Halsey - Closer.mp3",
+        "type": "file",
+        "path": ".\\The Chainsmokers,Halsey - Closer.mp3"
+    },
+    {
+        "name": "The Kid LAROI,Justin Bieber - STAY.mp3",
+        "type": "file",
+        "path": ".\\The Kid LAROI,Justin Bieber - STAY.mp3"
+    },
+    {
+        "name": "The Score - Revolution.mp3",
+        "type": "file",
+        "path": ".\\The Score - Revolution.mp3"
+    },
+    {
+        "name": "The xx - Intro.mp3",
+        "type": "file",
+        "path": ".\\The xx - Intro.mp3"
+    },
+    {
+        "name": "TheFatRat - Unity.mp3",
+        "type": "file",
+        "path": ".\\TheFatRat - Unity.mp3"
+    },
+    {
+        "name": "TheFatRat - Windfall.mp3",
+        "type": "file",
+        "path": ".\\TheFatRat - Windfall.mp3"
+    },
+    {
+        "name": "Thomas Greenberg - The Right Path.mp3",
+        "type": "file",
+        "path": ".\\Thomas Greenberg - The Right Path.mp3"
+    },
+    {
+        "name": "Tungevaag & Raaban - All For Love.mp3",
+        "type": "file",
+        "path": ".\\Tungevaag & Raaban - All For Love.mp3"
+    },
+    {
+        "name": "Unlike Pluto,Mike Taylor - Everything Black.mp3",
+        "type": "file",
+        "path": ".\\Unlike Pluto,Mike Taylor - Everything Black.mp3"
+    },
+    {
+        "name": "Valentin - A Little Story.mp3",
+        "type": "file",
+        "path": ".\\Valentin - A Little Story.mp3"
+    },
+    {
+        "name": "Veysigz - My Way.mp3",
+        "type": "file",
+        "path": ".\\Veysigz - My Way.mp3"
+    },
+    {
+        "name": "Vicetone - Nothing Stopping Me.mp3",
+        "type": "file",
+        "path": ".\\Vicetone - Nothing Stopping Me.mp3"
+    },
+    {
+        "name": "Vicetone,Cozi Zuehlsdorff - Nevada.mp3",
+        "type": "file",
+        "path": ".\\Vicetone,Cozi Zuehlsdorff - Nevada.mp3"
+    },
+    {
+        "name": "Vicetone,Meron Ryan - Walk Thru Fire.mp3",
+        "type": "file",
+        "path": ".\\Vicetone,Meron Ryan - Walk Thru Fire.mp3"
+    },
+    {
+        "name": "Virtual Riot - Energy Drink.mp3",
+        "type": "file",
+        "path": ".\\Virtual Riot - Energy Drink.mp3"
+    },
+    {
+        "name": "Wiz Khalifa Charlie Puth - See You Again.mp3",
+        "type": "file",
+        "path": ".\\Wiz Khalifa Charlie Puth - See You Again.mp3"
+    },
+    {
+        "name": "YiYi - Call of silence（钢琴版）.mp3",
+        "type": "file",
+        "path": ".\\YiYi - Call of silence（钢琴版）.mp3"
+    },
+    {
+        "name": "ZsFlovexl - Memory Reboot x Time to Pretend.mp3",
+        "type": "file",
+        "path": ".\\ZsFlovexl - Memory Reboot x Time to Pretend.mp3"
+    },
+    {
+        "name": "千坂 - At The Edge.mp3",
+        "type": "file",
+        "path": ".\\千坂 - At The Edge.mp3"
+    },
+    {
+        "name": "千坂 - Fragments.mp3",
+        "type": "file",
+        "path": ".\\千坂 - Fragments.mp3"
+    },
+    {
+        "name": "圈圈菌 - Wake（冠军进行曲）.mp3",
+        "type": "file",
+        "path": ".\\圈圈菌 - Wake（冠军进行曲）.mp3"
+    },
+    {
+        "name": "徐梦圆 - color-X.mp3",
+        "type": "file",
+        "path": ".\\徐梦圆 - color-X.mp3"
+    }
+];
+
+        let currentIndex = 0;
+
+        function renderNavigation() {
+            let navigationHtml = '';
+            navigationHtml += `<a href="#" class="btn btn-custom" onclick="navigateTo('/')">根目录</a>`;
+            document.getElementById('navigation').innerHTML = navigationHtml;
+        }
+
+        function renderFileList() {
+            let fileListHtml = '';
+            files.forEach((file, index) => {
+                fileListHtml += `
+                    <div class="list-group-item">
+                        <div class="audio-player">
+                            <a href="${file.path}" download>${file.name}</a>
+                            <audio id="audio${index}" controls>
+                                <source src="${file.path}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                    </div>`;
+            });
+            document.getElementById('file-list').innerHTML = fileListHtml;
+
+            // Initialize the first audio player
+            initializeAudioPlayers();
+        }
+
+        function initializeAudioPlayers() {
+            files.forEach((file, index) => {
+                const audioElement = document.getElementById(`audio${index}`);
+                audioElement.addEventListener('ended', () => {
+                    playNext(index);
+                });
+            });
+        }
+
+        function playNext(currentIndex) {
+            const nextIndex = (currentIndex + 1) % files.length; // Loop back to the first file
+            const nextAudioElement = document.getElementById(`audio${nextIndex}`);
+            if (nextAudioElement) {
+                nextAudioElement.play();
+            }
+        }
+
+        function navigateTo(path) {
+            // Implement navigation logic if needed
+            location.href = path;
+        }
+
+        // Initialize the page
+        renderNavigation();
+        renderFileList();
+    </script>
+</body>
+</html>
