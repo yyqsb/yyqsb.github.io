@@ -1,0 +1,1927 @@
+<html><head><base href="https://flux-pro-image-generator.ai/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLUX Pro Image Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root {
+    --primary-color: #39ff14; /* Neon lime green */
+    --secondary-color: #9d4edd; /* Purple */
+    --text-color: #cccccc; /* Gray */
+    --background-color: #000000;
+    --button-color: #2980b9; /* Darker shade of blue */
+    --button-hover-color: #1c638f; /* Even darker shade for hover */
+    --input-background: #1a1a1a;
+    --input-border: #333333;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  h1 {
+    color: var(--primary-color);
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .logo {
+    max-width: 200px;
+    height: auto;
+  }
+
+  nav {
+    background-color: #1a1a1a;
+    padding: 10px 0;
+    margin-bottom: 30px;
+  }
+
+  .menu {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .menu-item {
+    margin: 0 15px;
+  }
+
+  .menu-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .menu-link:hover {
+    color: var(--primary-color);
+  }
+
+  .input-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--secondary-color);
+    font-weight: 600;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 14px;
+  }
+
+  button {
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: var(--button-hover-color);
+  }
+
+  button:disabled {
+    background-color: #34495e;
+    cursor: not-allowed;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  .loading {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .loading-spinner {
+    border: 3px solid #2c3e50;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  #result {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+
+  .image-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .image-container:hover img {
+    transform: scale(1.05);
+  }
+
+  .preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .preview-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+  }
+
+  .preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .preview-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 30px;
+    cursor: pointer;
+  }
+
+  .save-btn {
+    position: absolute;
+    bottom: -50px;
+    right: 0;
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .download-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .image-container:hover .download-btn {
+    opacity: 1;
+  }
+
+  .seed-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 10px;
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    display: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .image-container:hover .seed-btn {
+    display: inline-flex;
+  }
+
+  .delete-btn {
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    display: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .image-container:hover .delete-btn {
+    display: inline-flex;
+  }
+
+  .toggle-group {
+    margin-bottom: 20px;
+  }
+
+  .toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+  }
+
+  input:checked + .slider {
+    background-color: var(--primary-color);
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(26px);
+  }
+
+  .toggle-label {
+    margin-left: 10px;
+    color: var(--text-color);
+  }
+
+  .advanced-options {
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .advanced-options h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+  }
+
+  .slider-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .slider-container label {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
+  .slider-container input[type="range"] {
+    flex: 2;
+  }
+
+  .slider-value {
+    flex: 0 0 40px;
+    text-align: right;
+  }
+
+  .model-select {
+    margin-bottom: 20px;
+  }
+
+  .model-select label {
+    margin-bottom: 10px;
+  }
+
+  .model-options {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .model-option {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .model-option:hover {
+    background-color: var(--input-background);
+  }
+
+  .model-option.selected {
+    background-color: var(--button-color);
+    color: #fff;
+  }
+
+  .tabs {
+    display: flex;
+    margin-bottom: 20px;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    background-color: var(--input-background);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .tab:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+
+  .tab:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  .tab.active {
+    background-color: var(--button-color);
+    color: #fff;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  #image-edit-options {
+    margin-top: 20px;
+  }
+
+  .reference-image-section {
+    margin-top: 20px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .reference-image-section h3 {
+    color: var(--primary-color);
+    margin-top: 0;
+  }
+
+  .image-buttons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .image-container:hover .image-buttons {
+    opacity: 1;
+  }
+
+  .image-btn {
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 30px;
+  }
+
+  .image-btn i {
+    margin-right: 5px;
+  }
+
+  .history-section {
+    margin-top: 20px;
+  }
+
+  .history-toggle {
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+
+  .history-toggle:hover {
+    background-color: var(--button-hover-color);
+  }
+
+  .history-toggle .icon {
+    margin-right: 8px;
+  }
+
+  .history-content {
+    margin-top: 10px;
+    background-color: var(--input-background);
+    border-radius: 4px;
+    padding: 10px;
+  }
+
+  .history-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .history-item h4 {
+    margin: 0 0 5px 0;
+    color: var(--primary-color);
+  }
+
+  .history-item p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .history-thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .history-thumbnail {
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .history-thumbnail:hover {
+    transform: scale(1.05);
+  }
+
+  .history-btn {
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 10px;
+    margin-top: 10px;
+  }
+
+  .history-btn:hover {
+    background-color: var(--button-hover-color);
+  }
+
+  .custom-size-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .custom-size-inputs input[type="number"] {
+    width: 100px;
+  }
+
+  .custom-size-inputs span {
+    color: var(--text-color);
+  }
+
+  .resolution-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .resolution-btn.active {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .input-label {
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 2px 5px;
+    font-size: 12px;
+  }
+
+  .input-wrapper input {
+    padding-left: 25px;
+  }
+
+  @media (max-width: 768px) {
+    nav {
+      display: none;
+    }
+
+    header {
+      padding-bottom: 15px;
+    }
+    
+    .share-btn {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+    }
+
+    .menu {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .menu-item {
+      margin: 10px 0;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    input, select, textarea {
+      font-size: 16px; /* Prevents zooming on iOS */
+    }
+
+    button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #result {
+      grid-template-columns: 1fr;
+    }
+
+    .image-container {
+      margin-bottom: 15px;
+    }
+
+    .image-buttons {
+      flex-wrap: wrap;
+      justify-content: space-around;
+    }
+
+    .image-btn {
+      margin-bottom: 5px;
+    }
+
+    .tabs {
+      flex-direction: column;
+    }
+
+    .tab {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    .model-options {
+      flex-direction: column;
+    }
+
+    .model-option {
+      margin-bottom: 5px;
+    }
+
+    .advanced-options {
+      padding: 15px;
+    }
+
+    .slider-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .slider-container input[type="range"] {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .slider-value {
+      align-self: flex-end;
+      margin-top: 5px;
+    }
+
+    #mix-btn {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .custom-size-inputs {
+      flex-direction: column;
+    }
+
+    .custom-size-inputs input[type="number"] {
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    .resolution-btn {
+      width: calc(50% - 5px);
+      margin-bottom: 5px;
+    }
+
+    .negative-buttons {
+      justify-content: space-between;
+    }
+
+    .negative-btn {
+      width: calc(50% - 5px);
+      margin-bottom: 5px;
+    }
+  }
+
+  .share-btn {
+    display: none;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: var(--button-color);
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .share-btn i {
+    margin-right: 5px;
+}
+
+.advanced-options-toggle {
+  margin-bottom: 20px;
+}
+
+#expand-options-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--button-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.advanced-options-container {
+  display: none;
+}
+
+.advanced-options-container.expanded {
+  display: block;
+}
+
+@keyframes magicalFluo {
+  0% {
+    background-color: #3498db; /* Start with a blue color */
+    box-shadow: 0 0 10px #3498db;
+  }
+  50% {
+    background-color: #9b59b6; /* Transition to a purple color */
+    box-shadow: 0 0 20px #9b59b6;
+  }
+  100% {
+    background-color: #3498db; /* Back to blue */
+    box-shadow: 0 0 10px #3498db;
+  }
+}
+
+#generate-btn {
+  background-color: var(--button-color);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+  animation: magicalFluo 3s infinite;
+}
+
+#generate-btn:hover {
+  animation: none;
+  background-color: var(--button-hover-color);
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <img src="https://www.bing.com/images/blob?bcid=S3f.AMYujGoHqxcxoNWLuD9SqbotqVTdP4w" alt="FLUX logo with golden text and glowing blue orb" class="logo">
+      <h1>FLUX Pro Image Generator</h1>
+    </header>
+
+    <nav>
+      <ul class="menu">
+        <li class="menu-item"><a href="https://flux-pro-image-generator.ai/" class="menu-link">Home</a></li>
+        <li class="menu-item"><a href="https://flux-pro-image-generator.ai/gallery" class="menu-link">Gallery</a></li>
+        <li class="menu-item"><a href="https://flux-pro-image-generator.ai/pricing" class="menu-link">Pricing</a></li>
+        <li class="menu-item"><a href="https://flux-pro-image-generator.ai/about" class="menu-link">About</a></li>
+        <li class="menu-item"><a href="https://flux-pro-image-generator.ai/contact" class="menu-link">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="generate">Generate</button>
+      <button class="tab" data-tab="edit">Edit</button>
+    </div>
+
+    <div id="generate-tab" class="tab-content active">
+      <div class="input-group">
+        <label for="prompt">Prompt:</label>
+        <div style="display: flex; align-items: flex-start;">
+          <textarea id="prompt" rows="3" placeholder="Describe the image you want to generate..."></textarea>
+          <button id="mix-btn" style="margin-left: 10px; width: 60px; height: 60px; padding: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <img src="https://example.com/dice-icon.svg" alt="Dice icon" style="width: 30px; height: 30px;">
+            <span style="font-size: 12px; margin-top: 5px;">MIX</span>
+          </button>
+        </div>
+        <div id="starter-buttons" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;"></div>
+        <div id="suggestion-buttons" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px;"></div>
+      </div>
+
+      <div class="input-group">
+        <label for="negative-prompt">Negative Prompt:</label>
+        <textarea id="negative-prompt" rows="2" placeholder="Describe what you don't want in the image..."></textarea>
+        <div id="negative-buttons" class="negative-buttons"></div>
+      </div>
+
+      <div class="advanced-options-toggle">
+        <button id="expand-options-btn">Expand Options</button>
+      </div>
+
+      <div id="advanced-options-container" class="advanced-options-container expanded">
+        <div class="model-select">
+          <label>Select Model:</label>
+          <div class="model-options">
+            <div class="model-option selected" data-model="flux-standard">FLUX Standard</div>
+            <div class="model-option" data-model="flux-pro">FLUX Pro</div>
+            <div class="model-option" data-model="flux-ultra">FLUX Ultra</div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="style">Style:</label>
+          <select id="style">
+            <option value="none" selected>None</option>
+            <option value="3d-model">3D Model</option>
+            <option value="analog-film">Analog Film</option>
+            <option value="anime">Anime</option>
+            <option value="cinematic">Cinematic</option>
+            <option value="comic-book">Comic Book</option>
+            <option value="digital-art">Digital Art</option>
+            <option value="enhance">Enhance</option>
+            <option value="fantasy-art">Fantasy Art</option>
+            <option value="isometric">Isometric</option>
+            <option value="line-art">Line Art</option>
+            <option value="low-poly">Low Poly</option>
+            <option value="neon-punk">Neon Punk</option>
+            <option value="origami">Origami</option>
+            <option value="photographic">Photographic</option>
+            <option value="pixel-art">Pixel Art</option>
+            <option value="texture">Texture</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="oil-painting">Oil Painting</option>
+            <option value="pencil-sketch">Pencil Sketch</option>
+            <option value="vector-art">Vector Art</option>
+            <option value="pop-art">Pop Art</option>
+            <option value="steampunk">Steampunk</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="abstract">Abstract</option>
+            <option value="surrealism">Surrealism</option>
+            <option value="impressionism">Impressionism</option>
+            <option value="cubism">Cubism</option>
+            <option value="minimalism">Minimalism</option>
+            <option value="vaporwave">Vaporwave</option>
+            <option value="retro">Retro</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="style-mix">Mix with Style:</label>
+          <select id="style-mix">
+            <option value="none" selected>None</option>
+            <option value="3d-model">3D Model</option>
+            <option value="analog-film">Analog Film</option>
+            <option value="anime">Anime</option>
+            <option value="cinematic">Cinematic</option>
+            <option value="comic-book">Comic Book</option>
+            <option value="digital-art">Digital Art</option>
+            <option value="enhance">Enhance</option>
+            <option value="fantasy-art">Fantasy Art</option>
+            <option value="isometric">Isometric</option>
+            <option value="line-art">Line Art</option>
+            <option value="low-poly">Low Poly</option>
+            <option value="neon-punk">Neon Punk</option>
+            <option value="origami">Origami</option>
+            <option value="photographic">Photographic</option>
+            <option value="pixel-art">Pixel Art</option>
+            <option value="texture">Texture</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="oil-painting">Oil Painting</option>
+            <option value="pencil-sketch">Pencil Sketch</option>
+            <option value="vector-art">Vector Art</option>
+            <option value="pop-art">Pop Art</option>
+            <option value="steampunk">Steampunk</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="abstract">Abstract</option>
+            <option value="surrealism">Surrealism</option>
+            <option value="impressionism">Impressionism</option>
+            <option value="cubism">Cubism</option>
+            <option value="minimalism">Minimalism</option>
+            <option value="vaporwave">Vaporwave</option>
+            <option value="retro">Retro</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="aspect-ratio">Aspect Ratio:</label>
+          <select id="aspect-ratio">
+            <option value="1:1" selected>1:1</option>
+            <option value="16:9">16:9</option>
+            <option value="4:3">4:3</option>
+            <option value="9:16">9:16</option>
+            <option value="21:9">21:9</option>
+            <option value="3:2">3:2</option>
+            <option value="2:3">2:3</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+
+        <div id="custom-size" class="input-group" style="display: none;">
+          <label for="custom-width">Custom pixel size:</label>
+          <div class="custom-size-inputs">
+            <div class="input-wrapper">
+              <span class="input-label">W</span>
+              <input type="number" id="custom-width" placeholder="Width" min="1">
+            </div>
+            <span>x</span>
+            <div class="input-wrapper">
+              <span class="input-label">H</span>
+              <input type="number" id="custom-height" placeholder="Height" min="1">
+            </div>
+          </div>
+        </div>
+
+        <div id="resolution-buttons" style="display: none; margin-bottom: 10px;">
+          <button class="resolution-btn" data-width="640" data-height="480">SD</button>
+          <button class="resolution-btn" data-width="1280" data-height="720">HD</button>
+          <button class="resolution-btn" data-width="1920" data-height="1080">FULL HD</button>
+          <button class="resolution-btn" data-width="2048" data-height="1080">2K</button>
+          <button class="resolution-btn" data-width="3840" data-height="2160">4K</button>
+          <button class="resolution-btn" data-width="7680" data-height="4320">8K</button>
+          <button class="resolution-btn" data-width="15360" data-height="8640">16K</button>
+        </div>
+
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="nsfw" name="nsfw">
+            <span class="slider"></span>
+            <span class="toggle-label">Allow NSFW content</span>
+          </label>
+        </div>
+
+        <div class="toggle-group">
+          <label class="toggle">
+            <input type="checkbox" id="seed-lock" name="seed-lock">
+            <span class="slider"></span>
+            <span class="toggle-label">Lock Seed</span>
+          </label>
+        </div>
+
+        <div class="advanced-options">
+          <h3>Advanced Options</h3>
+          <div class="slider-container">
+            <label for="creativity">Creativity:</label>
+            <input type="range" id="creativity" min="0" max="100" value="50">
+            <span class="slider-value" id="creativity-value">50</span>
+          </div>
+          <div class="slider-container">
+            <label for="quality">Quality:</label>
+            <input type="range" id="quality" min="0" max="100" value="75">
+            <span class="slider-value" id="quality-value">75</span>
+          </div>
+          <div class="slider-container">
+            <label for="style-strength">Style Strength:</label>
+            <input type="range" id="style-strength" min="0" max="100" value="50">
+            <span class="slider-value" id="style-strength-value">50</span>
+          </div>
+          <div class="slider-container">
+            <label for="similarity-level">Similarity to Reference:</label>
+            <input type="range" id="similarity-level" min="0" max="100" value="50">
+            <span class="slider-value" id="similarity-level-value">50</span>
+          </div>
+          <div class="input-group">
+            <label for="seed">Seed:</label>
+            <input type="number" id="seed" min="-1" value="-1" placeholder="Enter seed or leave empty for random">
+          </div>
+          <div class="input-group">
+            <label for="num-generations">Number of Generations:</label>
+            <input type="number" id="num-generations" min="1" max="20" value="4">
+          </div>
+        </div>
+      </div>
+
+      <div class="reference-image-section">
+        <h3>Reference Image</h3>
+        <div class="input-group">
+          <label for="reference-image-upload">Upload a reference image:</label>
+          <input type="file" id="reference-image-upload" accept="image/*">
+        </div>
+        <div id="reference-image-container" style="position: relative; display: none;">
+          <img id="reference-image-preview" alt="Reference image preview" style="max-width: 100%; margin-top: 10px;">
+          <button id="delete-reference-image" style="position: absolute; top: 5px; right: 5px; background-color: red; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer;">X</button>
+        </div>
+      </div>
+
+      <button id="generate-btn" onclick="generateImages(true)">
+        <i data-lucide="image-plus" class="icon"></i>
+        Generate Images
+      </button>
+      <button id="generate-with-reference-btn" style="display: none;" onclick="generateImagesWithReference()">
+        <i data-lucide="image-plus" class="icon"></i>
+        Generate Images from Reference
+      </button>
+    </div>
+
+    <div id="edit-tab" class="tab-content">
+      <div class="input-group">
+        <label for="image-upload">Upload an image to edit:</label>
+        <input type="file" id="image-upload" accept="image/*">
+      </div>
+      <img id="uploaded-image" alt="Uploaded image for editing">
+
+      <div id="image-edit-options" style="display: none;">
+        <div class="input-group">
+          <label for="edit-prompt">Edit Prompt:</label>
+          <textarea id="edit-prompt" rows="3" placeholder="Describe the changes you want to make..."></textarea>
+        </div>
+
+        <div class="advanced-options">
+          <h3>Edit Options</h3>
+          <div class="slider-container">
+            <label for="edit-strength">Edit Strength:</label>
+            <input type="range" id="edit-strength" min="0" max="100" value="50">
+            <span class="slider-value" id="edit-strength-value">50</span>
+          </div>
+          <div class="slider-container">
+            <label for="inpainting-brush">Inpainting Brush Size:</label>
+            <input type="range" id="inpainting-brush" min="1" max="100" value="20">
+            <span class="slider-value" id="inpainting-brush-value">20</span>
+          </div>
+        </div>
+
+        <button id="edit-btn" onclick="editImage()">
+          <i data-lucide="edit-3" class="icon"></i>
+          Edit Image
+        </button>
+      </div>
+    </div>
+
+    <div class="loading">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <div id="result"></div>
+
+    <button id="continue-btn" onclick="generateImages(false)" style="display: none;">
+      <i data-lucide="refresh-cw" class="icon"></i>
+      Generate More Images
+    </button>
+
+    <div class="history-section">
+      <button id="history-toggle" class="history-toggle">
+        <i data-lucide="clock" class="icon"></i>
+        History
+      </button>
+      <div id="history-content" class="history-content" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    let generationHistory = [];
+
+    const starterPrompts = [
+      "A photo of",
+      "An illustration of",
+      "A commercial photo of",
+      "A 3D character of",
+      "A drawing of",
+      "A blueprint of",
+      "A digital art illustration of",
+      "A realistic photo of",
+      "A movie scene of",
+      "An album cover for",
+      "A greeting card for"
+    ];
+
+    function displayStarterButtons() {
+      const starterButtonsContainer = document.getElementById('starter-buttons');
+      starterButtonsContainer.innerHTML = '';
+      starterPrompts.forEach(prompt => {
+        const button = document.createElement('button');
+        button.textContent = prompt;
+        button.className = 'suggestion-btn';
+        button.onclick = () => {
+          document.getElementById('prompt').value = prompt + ' ';
+          document.getElementById('prompt').focus();
+          hideStarterButtons();
+        };
+        starterButtonsContainer.appendChild(button);
+      });
+    }
+
+    function hideStarterButtons() {
+      document.getElementById('starter-buttons').innerHTML = '';
+    }
+
+    document.getElementById('prompt').addEventListener('input', function() {
+      if (this.value.trim() === '') {
+        displayStarterButtons();
+      } else {
+        hideStarterButtons();
+      }
+    });
+
+    let typingTimer;
+    const doneTypingInterval = 1000; // 1 second
+
+    document.getElementById('prompt').addEventListener('input', function() {
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(getSuggestions, doneTypingInterval);
+    });
+
+    function getSuggestions() {
+      const promptText = document.getElementById('prompt').value;
+      if (promptText.trim() === '') return;
+
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: `You are an expert in prompt designing. Read the [context] and choose a word that is likely to complete the sentence as the last word in the [context].
+
+- Important - write only one word - avoid comments - only do your task.
+
+[context] ${promptText}`
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        displaySuggestions(data.suggestions || [data.prompt]);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    function displaySuggestions(suggestions) {
+      const suggestionButtons = document.getElementById('suggestion-buttons');
+      suggestionButtons.innerHTML = '';
+
+      suggestions.slice(0, 5).forEach(suggestion => {
+        const button = document.createElement('button');
+        button.textContent = suggestion;
+        button.className = 'suggestion-btn';
+        button.onclick = () => appendSuggestion(suggestion);
+        suggestionButtons.appendChild(button);
+      });
+    }
+
+    function appendSuggestion(suggestion) {
+      const promptTextarea = document.getElementById('prompt');
+      promptTextarea.value = promptTextarea.value.trim() + ' ' + suggestion;
+      promptTextarea.focus();
+    }
+
+    function parseFilename(filename) {
+      const parts = filename.split('_seed-');
+      if (parts.length > 1) {
+        let prompt = parts[0].replace(/-/g, ' ').trim();
+        prompt = prompt.replace(/\.[^/.]+$/, "");
+        let seed = parts[1].split('_')[0];
+        let aspectRatio = filename.match(/sz-([\d.]+)/);
+        aspectRatio = aspectRatio ? aspectRatio[1].replace('.', ':') : null;
+        return { prompt, seed, aspectRatio };
+      }
+      return null;
+    }
+
+    function updateSliderValue(sliderId) {
+      const slider = document.getElementById(sliderId);
+      const valueDisplay = document.getElementById(`${sliderId}-value`);
+      valueDisplay.textContent = slider.value;
+    }
+
+    ['creativity', 'quality', 'style-strength', 'edit-strength', 'inpainting-brush', 'similarity-level'].forEach(sliderId => {
+      const slider = document.getElementById(sliderId);
+      slider.addEventListener('input', () => updateSliderValue(sliderId));
+    });
+
+    document.querySelectorAll('.model-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.model-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        
+        // Set Quality to 100 when FLUX Ultra is selected
+        if (option.dataset.model === 'flux-ultra') {
+          const qualitySlider = document.getElementById('quality');
+          qualitySlider.value = 100;
+          updateSliderValue('quality');
+        }
+      });
+    });
+
+    document.getElementById('aspect-ratio').addEventListener('change', function() {
+      const customSizeDiv = document.getElementById('custom-size');
+      const resolutionButtons = document.getElementById('resolution-buttons');
+      if (this.value === 'custom') {
+        customSizeDiv.style.display = 'block';
+        resolutionButtons.style.display = 'block';
+      } else {
+        customSizeDiv.style.display = 'none';
+        resolutionButtons.style.display = 'none';
+      }
+    });
+
+    document.querySelectorAll('.resolution-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.resolution-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const width = this.dataset.width;
+        const height = this.dataset.height;
+        
+        document.getElementById('custom-width').value = width;
+        document.getElementById('custom-height').value = height;
+
+        // Update aspect ratio dropdown to 'custom'
+        document.getElementById('aspect-ratio').value = 'custom';
+      });
+    });
+
+    document.getElementById('custom-width').addEventListener('input', updateAspectRatio);
+    document.getElementById('custom-height').addEventListener('input', updateAspectRatio);
+
+    function updateAspectRatio() {
+      const width = document.getElementById('custom-width').value;
+      const height = document.getElementById('custom-height').value;
+      if (width && height) {
+        document.getElementById('aspect-ratio').value = 'custom';
+      }
+    }
+
+    function getAspectRatio() {
+      const aspectRatio = document.getElementById('aspect-ratio').value;
+      if (aspectRatio === 'custom') {
+        const width = document.getElementById('custom-width').value;
+        const height = document.getElementById('custom-height').value;
+        return width && height ? `${width}:${height}` : '1:1';
+      }
+      return aspectRatio;
+    }
+
+    function toggleHistory() {
+      const historyContent = document.getElementById('history-content');
+      historyContent.style.display = historyContent.style.display === 'none' ? 'block' : 'none';
+      if (historyContent.style.display === 'block') {
+        displayHistory();
+      }
+    }
+
+    function displayHistory() {
+      const historyContent = document.getElementById('history-content');
+      historyContent.innerHTML = '';
+      generationHistory.forEach((item, index) => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        historyItem.innerHTML = `
+          <h4>Generation ${index + 1}</h4>
+          <p>Prompt: ${item.prompt}</p>
+          <p>Seed: ${item.seed}</p>
+          <p>Aspect Ratio: ${item.aspectRatio}</p>
+          <p>Date: ${item.date}</p>
+          <div class="history-thumbnails"></div>
+        `;
+        
+        const thumbnailsContainer = historyItem.querySelector('.history-thumbnails');
+        item.images.forEach(imageUrl => {
+          const thumbnail = document.createElement('div');
+          thumbnail.className = 'history-thumbnail';
+          thumbnail.style.backgroundImage = `url(${imageUrl})`;
+          thumbnail.onclick = () => openHistoryPreview(imageUrl, item.prompt, item.seed);
+          thumbnailsContainer.appendChild(thumbnail);
+        });
+        
+        historyContent.appendChild(historyItem);
+      });
+    }
+
+    function openHistoryPreview(imageUrl, prompt, seed) {
+      const overlay = document.createElement('div');
+      overlay.className = 'preview-overlay';
+      
+      const content = document.createElement('div');
+      content.className = 'preview-content';
+      
+      const previewImg = document.createElement('img');
+      previewImg.src = imageUrl;
+      previewImg.alt = `Historical image: ${prompt}`;
+      previewImg.className = 'preview-image';
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '&times;';
+      closeBtn.className = 'preview-close';
+      closeBtn.onclick = () => document.body.removeChild(overlay);
+      
+      const downloadBtn = document.createElement('button');
+      downloadBtn.textContent = 'Download';
+      downloadBtn.className = 'history-btn';
+      downloadBtn.onclick = () => saveImage(imageUrl, prompt, seed);
+      
+      const copySeedBtn = document.createElement('button');
+      copySeedBtn.textContent = 'Copy Seed';
+      copySeedBtn.className = 'history-btn';
+      copySeedBtn.onclick = () => {
+        navigator.clipboard.writeText(seed).then(() => {
+          alert('Seed copied to clipboard!');
+        });
+      };
+      
+      content.appendChild(previewImg);
+      content.appendChild(closeBtn);
+      content.appendChild(downloadBtn);
+      content.appendChild(copySeedBtn);
+      overlay.appendChild(content);
+      document.body.appendChild(overlay);
+    }
+
+    function saveToHistory(prompt, seed, aspectRatio, imageUrls) {
+      const customWidth = document.getElementById('custom-width').value;
+      const customHeight = document.getElementById('custom-height').value;
+      generationHistory.unshift({
+        prompt: prompt,
+        seed: seed,
+        aspectRatio: aspectRatio,
+        date: new Date().toLocaleString(),
+        customWidth: customWidth,
+        customHeight: customHeight,
+        images: imageUrls
+      });
+    }
+
+    function saveImage(imageUrl, prompt, seed) {
+      fetch(imageUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          const sanitizedPrompt = prompt.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 50);
+          const generationNumber = Math.floor(Math.random() * 99999999) + 1;
+          const customWidth = document.getElementById('custom-width').value;
+          const customHeight = document.getElementById('custom-height').value;
+          const dimensions = customWidth && customHeight ? `${customWidth}x${customHeight}` : getAspectRatio().replace(':', '.');
+          link.download = `${sanitizedPrompt}_seed-${seed}_gen-${generationNumber}-sz-${dimensions}.jpg`;
+          link.click();
+          URL.revokeObjectURL(link.href);
+          
+          saveGenerationInfo(prompt, seed, generationNumber, customWidth, customHeight);
+        })
+        .catch(console.error);
+    }
+
+    function saveGenerationInfo(prompt, seed, generationNumber, customWidth, customHeight) {
+      const negativePrompt = document.getElementById('negative-prompt').value;
+      const aspectRatio = getAspectRatio();
+      const cfg = document.getElementById('creativity').value;
+      const steps = document.getElementById('quality').value;
+      const date = new Date().toLocaleString();
+      const selectedModel = document.querySelector('.model-option.selected').dataset.model;
+      const style = document.getElementById('style').value;
+      const styleMix = document.getElementById('style-mix').value;
+
+      const info = `Generation Information:
+Prompt: ${prompt}
+Negative Prompt: ${negativePrompt}
+Seed: ${seed}
+Aspect Ratio: ${aspectRatio}
+Custom Dimensions: ${customWidth}x${customHeight}
+CFG: ${cfg}
+Steps: ${steps}
+Date: ${date}
+Model: ${selectedModel}
+Style: ${style}
+Style Mix: ${styleMix}
+`;
+
+      const blob = new Blob([info], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `generation_info_${generationNumber}.txt`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function generateImages(resetExisting, referenceImageSrc = null, similarityLevel = null) {
+      const numGenerations = document.getElementById('num-generations').value;
+      const seedInput = document.getElementById('seed');
+      const seedLock = document.getElementById('seed-lock').checked;
+      let seed = seedInput.value;
+
+      if (!seedLock) {
+        seed = generateRandomSeed();
+        seedInput.value = seed;
+      }
+
+      const prompt = document.getElementById('prompt').value;
+      const negativePrompt = document.getElementById('negative-prompt').value;
+      const style = document.getElementById('style').value;
+      const styleMix = document.getElementById('style-mix').value;
+      const aspectRatio = getAspectRatio();
+      const nsfw = document.getElementById('nsfw').checked;
+      const creativity = document.getElementById('creativity').value;
+      const quality = document.getElementById('quality').value;
+      const styleStrength = document.getElementById('style-strength').value;
+      const selectedModel = document.querySelector('.model-option.selected').dataset.model;
+      const generateBtn = document.getElementById('generate-btn');
+      const continueBtn = document.getElementById('continue-btn');
+      const loading = document.querySelector('.loading');
+      const result = document.getElementById('result');
+
+      if (!prompt) {
+        alert('Please enter a prompt');
+        return;
+      }
+
+      generateBtn.disabled = true;
+      loading.style.display = 'flex';
+
+      if (resetExisting) {
+        result.innerHTML = '';
+      }
+
+      const customWidth = document.getElementById('custom-width').value;
+      const customHeight = document.getElementById('custom-height').value;
+      const dimensions = customWidth && customHeight ? [parseInt(customWidth), parseInt(customHeight)] : aspectRatio.split(':').map(Number);
+      const [width, height] = dimensions;
+      const paddingTop = (height / width) * 100;
+      const generatedImageUrls = [];
+
+      for (let i = 0; i < numGenerations; i++) {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
+        imageContainer.style.paddingTop = `${paddingTop}%`;
+        const img = document.createElement('img');
+        imageContainer.appendChild(img);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'image-buttons';
+        imageContainer.appendChild(buttonContainer);
+
+        const upscaleBtn = document.createElement('button');
+        upscaleBtn.className = 'image-btn upscale-btn';
+        upscaleBtn.innerHTML = '<i data-lucide="zoom-in"></i>UPSCALE';
+        upscaleBtn.title = 'Upscale';
+        upscaleBtn.onclick = (e) => {
+          e.stopPropagation();
+          upscaleImage(img);
+        };
+        buttonContainer.appendChild(upscaleBtn);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'image-btn download-btn';
+        downloadBtn.innerHTML = '<i data-lucide="download"></i>Download';
+        downloadBtn.title = 'Download';
+        downloadBtn.onclick = (e) => {
+          e.stopPropagation();
+          saveImage(img.src, prompt, seed || 'random');
+        };
+        imageContainer.appendChild(downloadBtn);
+
+        const shareBtn = document.createElement('button');
+        shareBtn.className = 'image-btn share-btn';
+        shareBtn.innerHTML = '<i data-lucide="share-2"></i>Share';
+        shareBtn.title = 'Share';
+        shareBtn.onclick = (e) => {
+          e.stopPropagation();
+          shareImage(img.src, prompt);
+        };
+        buttonContainer.appendChild(shareBtn);
+
+        const seedBtn = document.createElement('button');
+        seedBtn.className = 'image-btn';
+        seedBtn.innerHTML = '<i data-lucide="hash"></i>Copy Seed';
+        seedBtn.title = 'Copy Seed';
+        seedBtn.setAttribute('data-seed', seed || 'random');
+        seedBtn.onclick = (e) => {
+          e.stopPropagation();
+          copySeed(seedBtn);
+        };
+        buttonContainer.appendChild(seedBtn);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'image-btn';
+        deleteBtn.innerHTML = '<i data-lucide="x"></i>Delete';
+        deleteBtn.title = 'Delete';
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          result.removeChild(imageContainer);
+        };
+        buttonContainer.appendChild(deleteBtn);
+
+        result.appendChild(imageContainer);
+
+        setTimeout(() => {
+          const imageUrl = `https://source.unsplash.com/${width}x${height}?${encodeURIComponent(prompt)}&${encodeURIComponent(style)}&${encodeURIComponent(styleMix)}`;
+          img.src = imageUrl;
+          img.alt = `Generated image based on: ${prompt}`;
+          img.width = width;
+          img.height = height;
+          img.addEventListener('load', () => {
+            img.style.opacity = 1;
+          });
+          img.addEventListener('click', () => openPreview(img));
+          generatedImageUrls.push(imageUrl);
+        }, 1000 * (i + 1));
+      }
+
+      saveToHistory(prompt, seed, aspectRatio, generatedImageUrls);
+
+      setTimeout(() => {
+        generateBtn.disabled = false;
+        loading.style.display = 'none';
+        continueBtn.style.display = 'inline-flex';
+      }, 5000);
+    }
+
+    function shareImage(imageUrl, prompt) {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Generated Image',
+          text: `Check out this image generated with the prompt: ${prompt}`,
+          url: imageUrl
+        }).then(() => {
+          console.log('Thanks for sharing!');
+        }).catch(console.error);
+      } else {
+        alert('Web Share API is not supported in your browser');
+      }
+    }
+
+    function upscaleImage(img) {
+      const loading = document.querySelector('.loading');
+      loading.style.display = 'flex';
+
+      // Simulate upscaling process (replace with actual API call in production)
+      setTimeout(() => {
+        const upscaledImageUrl = simulateUpscale(img.src);
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'preview-overlay';
+        
+        const content = document.createElement('div');
+        content.className = 'preview-content';
+        
+        const previewImg = document.createElement('img');
+        previewImg.src = upscaledImageUrl;
+        previewImg.alt = 'Upscaled image';
+        previewImg.className = 'preview-image';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.className = 'preview-close';
+        closeBtn.onclick = () => document.body.removeChild(overlay);
+        
+        const downloadBtn = document.createElement('button');
+        downloadBtn.textContent = 'Download Upscaled';
+        downloadBtn.className = 'save-btn';
+        downloadBtn.onclick = () => saveImage(upscaledImageUrl, img.alt + ' (Upscaled)', '-1');
+        
+        content.appendChild(previewImg);
+        content.appendChild(closeBtn);
+        content.appendChild(downloadBtn);
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+
+        loading.style.display = 'none';
+      }, 3000); // Simulating a 3-second upscaling process
+    }
+
+    function simulateUpscale(imageUrl) {
+      // In a real implementation, you would send the image to a server for upscaling
+      // For this simulation, we'll just return the original image
+      return imageUrl;
+    }
+
+    function generateImagesWithReference() {
+      const referenceImage = document.getElementById('reference-image-preview');
+      const similarityLevel = document.getElementById('similarity-level').value;
+      const prompt = document.getElementById('prompt').value;
+      const negativePrompt = document.getElementById('negative-prompt').value;
+      const style = document.getElementById('style').value;
+      const styleMix = document.getElementById('style-mix').value;
+      const aspectRatio = getAspectRatio();
+      const nsfw = document.getElementById('nsfw').checked;
+      const creativity = document.getElementById('creativity').value;
+      const quality = document.getElementById('quality').value;
+      const styleStrength = document.getElementById('style-strength').value;
+      const selectedModel = document.querySelector('.model-option.selected').dataset.model;
+
+      if (!referenceImage.src || !prompt) {
+        alert('Please upload a reference image and enter a prompt');
+        return;
+      }
+
+      alert(`Generating images with reference:\nSimilarity: ${similarityLevel}%\nPrompt: ${prompt}\nStyle: ${style}\nStyle Mix: ${styleMix}`);
+      generateImages(true, referenceImage.src, similarityLevel);
+    }
+
+    function editImage() {
+      const editPrompt = document.getElementById('edit-prompt').value;
+      const editStrength = document.getElementById('edit-strength').value;
+      const inpaintingBrush = document.getElementById('inpainting-brush').value;
+      const uploadedImage = document.getElementById('uploaded-image');
+      const editBtn = document.getElementById('edit-btn');
+      const loading = document.querySelector('.loading');
+      const result = document.getElementById('result');
+
+      if (!uploadedImage.src || !editPrompt) {
+        alert('Please upload an image and provide an edit prompt');
+        return;
+      }
+
+      editBtn.disabled = true;
+      loading.style.display = 'flex';
+      result.innerHTML = '';
+
+      setTimeout(() => {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
+        const img = document.createElement('img');
+        img.src = uploadedImage.src;
+        img.alt = `Edited image based on: ${editPrompt}`;
+        imageContainer.appendChild(img);
+
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'download-btn';
+        downloadBtn.textContent = 'Download';
+        downloadBtn.onclick = (e) => {
+          e.stopPropagation();
+          saveImage(img.src, editPrompt, '-1');
+        };
+        imageContainer.appendChild(downloadBtn);
+
+        result.appendChild(imageContainer);
+        img.addEventListener('click', () => openPreview(img));
+
+        editBtn.disabled = false;
+        loading.style.display = 'none';
+      }, 3000);
+    }
+
+    function openPreview(img) {
+      const overlay = document.createElement('div');
+      overlay.className = 'preview-overlay';
+      
+      const content = document.createElement('div');
+      content.className = 'preview-content';
+      
+      const previewImg = document.createElement('img');
+      previewImg.src = img.src;
+      previewImg.alt = img.alt;
+      previewImg.className = 'preview-image';
+      
+      const closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '&times;';
+      closeBtn.className = 'preview-close';
+      closeBtn.onclick = () => document.body.removeChild(overlay);
+      
+      const saveBtn = document.createElement('button');
+      saveBtn.textContent = 'Save Image';
+      saveBtn.className = 'save-btn';
+      saveBtn.onclick = () => saveImage(previewImg.src, img.alt, '-1');
+      
+      content.appendChild(previewImg);
+      content.appendChild(closeBtn);
+      content.appendChild(saveBtn);
+      overlay.appendChild(content);
+      document.body.appendChild(overlay);
+    }
+
+    document.getElementById('reference-image-upload').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const referenceImagePreview = document.getElementById('reference-image-preview');
+          referenceImagePreview.src = e.target.result;
+          document.getElementById('reference-image-container').style.display = 'block';
+          document.getElementById('generate-with-reference-btn').style.display = 'inline-flex';
+
+          const parsedData = parseFilename(file.name);
+          if (parsedData) {
+            document.getElementById('prompt').value = parsedData.prompt;
+            document.getElementById('seed').value = parsedData.seed === '-1' ? '-1' : parseInt(parsedData.seed);
+            if (parsedData.aspectRatio) {
+              document.getElementById('aspect-ratio').value = parsedData.aspectRatio;
+            }
+          } else {
+            analyzeImage(file).then(generatedPrompt => {
+              document.getElementById('prompt').value = generatedPrompt;
+            });
+          }
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('image-upload').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const uploadedImage = document.getElementById('uploaded-image');
+          uploadedImage.src = e.target.result;
+          uploadedImage.style.display = 'block';
+          document.getElementById('image-edit-options').style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('delete-reference-image').addEventListener('click', deleteReferenceImage);
+
+    function deleteReferenceImage() {
+      document.getElementById('reference-image-upload').value = '';
+      document.getElementById('reference-image-container').style.display = 'none';
+      document.getElementById('generate-with-reference-btn').style.display = 'none';
+      document.getElementById('prompt').value = '';
+    }
+
+    function copySeed(button) {
+      const seed = button.getAttribute('data-seed');
+      navigator.clipboard.writeText(seed).then(() => {
+        alert('Seed copied to clipboard!');
+      });
+    }
+
+    function generateRandomSeed() {
+      return Math.floor(Math.random() * 4294967296);
+    }
+
+    function initializeSeed() {
+      const seedInput = document.getElementById('seed');
+      if (seedInput.value === '-1' || seedInput.value === '') {
+        seedInput.value = generateRandomSeed();
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+      });
+    });
+
+    document.getElementById('mix-btn').addEventListener('click', mixPrompt);
+
+    function mixPrompt() {
+      const mixBtn = document.getElementById('mix-btn');
+      const promptTextarea = document.getElementById('prompt');
+      const loading = document.querySelector('.loading');
+
+      mixBtn.disabled = true;
+      loading.style.display = 'flex';
+
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt: "You are an expert prompt designer in generating images through the AI. Create a casual prompt. Examples: 'a photo of a cat eating grass, in the a garden, close-up shot, teal and orange, high detailed, 8k'"
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        promptTextarea.value = data.prompt;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to generate a mixed prompt. Please try again.');
+      })
+      .finally(() => {
+        mixBtn.disabled = false;
+        loading.style.display = 'none';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeSeed);
+    document.getElementById('history-toggle').addEventListener('click', toggleHistory);
+
+    const negativePrompts = {
+      "Basic": "worst quality, low quality, blurry, text, watermark, logo, banner, cropped, jpeg artifacts, signature, error, duplicate, ugly, monochrome, horror, distortion, glitch, pixelation, noise, mutation",
+      "People": "bad anatomy, poorly drawn, distorted features, missing limbs, awkward poses, unnatural expressions, extra body parts, bad proportions, cloned faces, ugly faces, unrecognizable, unrealistic skin, wrong age, poor lighting, strange shadows, missing details, awkward angles, excessive features, disproportionate limbs, creepy expressions",
+      "Animals": "bad anatomy, distorted proportions, missing limbs, poorly drawn fur, unrecognizable species, extra legs, strange colors, unnatural poses, ugly features, unrealistic eyes, cloned animals, bad textures, awkward expressions, missing tails, disproportionate body, extra eyes, mutated forms, blurry details, odd sizes, unidentifiable",
+      "Buildings": "poorly designed, unrealistic structure, bad perspective, missing details, distorted shapes, ugly architecture, excessive clutter, wrong materials, awkward angles, unrecognizable styles, bad lighting, strange shadows, pixelated textures, disproportionate elements, chaotic layout, missing windows, awkward proportions, glitchy surfaces, low resolution, unrealistic colors",
+      "Anime Character": "bad anatomy, poorly drawn face, missing limbs, awkward poses, extra eyes, weird expressions, distorted features, bad proportions, cloned faces, ugly hair, unrealistic colors, awkward outfits, glitchy designs, missing details, unnatural poses, excessive features, strange accessories, poorly rendered, disproportionate limbs, creepy expressions",
+      "Realistic Character": "bad anatomy, awkward poses, poorly drawn face, missing limbs, unrecognizable features, strange expressions, bad lighting, unrealistic skin, distorted proportions, awkward angles, missing details, cloned faces, ugly expressions, excessive features, glitchy designs, noise, pixelation, wrong age, bad textures, unnatural colors",
+      "Graphics": "poor resolution, pixelated images, awkward designs, bad color contrast, excessive noise, glitchy visuals, unrecognizable shapes, distorted elements, chaotic layouts, missing details, low quality, awkward proportions, ugly designs, unrealistic textures, poor lighting, strange shadows, excessive clutter, bad typography, unclear visuals, distortion",
+      "Greeting Message": "poorly written, awkward phrasing, bad grammar, unrecognizable text, strange fonts, distorted letters, excessive punctuation, missing context, confusing message, ugly design, low quality, pixelated text, awkward spacing, unclear meaning, glitchy visuals, chaotic layout, bad colors, excessive noise, strange formatting, unnatural tone",
+      "Blueprint": "poorly drawn, distorted lines, missing details, unrecognizable shapes, bad proportions, unclear measurements, chaotic layout, excessive clutter, pixelated images, incorrect scaling, awkward angles, unrealistic designs, missing annotations, glitchy visuals, low quality, bad contrast, unclear instructions, messy presentation, excessive noise, strange symbols",
+      "3D Character": "bad modeling, awkward poses, distorted features, missing limbs, unrealistic textures, glitchy animations, poorly rendered, unrecognizable shapes, excessive noise, bad lighting, pixelated details, strange colors, awkward expressions, cloned faces, low quality, chaotic designs, disproportionate limbs, missing details, unnatural movements, glitchy surfaces",
+      "CGI Objects": "distorted shapes, bad lighting, unrealistic textures, poor resolution, pixelated details, strange colors, awkward angles, missing details, chaotic designs, glitchy visuals, excessive noise, poorly rendered, unidentifiable objects, low quality, bad reflections, unnatural shadows, excessive clutter, awkward proportions, poorly executed, strange textures, unidentifiable vehicles",
+      "Fashion Fabrics": "bad textures, unrealistic patterns, awkward designs, distorted shapes, pixelated images, low quality, confusing colors, excessive noise, strange prints, poorly rendered, unrecognizable styles, chaotic layouts, missing details, unnatural draping, glitchy visuals, awkward proportions, unrealistic fabric behavior, bad lighting, excessive clutter, unidentifiable materials",
+      "Abstract": "chaotic designs, unrecognizable shapes, excessive noise, poorly rendered, pixelated details, strange colors, awkward compositions, bad lighting, distorted elements, low quality, unrealistic textures, missing details, glitchy visuals, confusing patterns, awkward proportions, excessive clutter, unnatural forms, unrealistic behaviors, unclear meaning, disjointed elements",
+      "Painting": "poorly painted, distorted features, bad proportions, unnatural colors, low quality, pixelated details, awkward brush strokes, missing details, glitchy visuals, chaotic composition, unrecognizable subjects, excessive noise, unrealistic textures, strange lighting, awkward angles, ugly designs, confusing themes, bad perspective, excessive clutter, poorly executed",
+      "Space": "poorly rendered, distorted elements, unrecognizable shapes, bad lighting, low quality, pixelated images, chaotic designs, excessive noise, unrealistic colors, missing details, glitchy visuals, awkward proportions, strange shadows, unidentifiable objects, bad textures, excessive clutter, unnatural patterns, confusing layouts, poorly designed, chaotic composition",
+      "Ethicality": "inappropriate content, offensive themes, unrealistic portrayals, harmful stereotypes, negative messages, unethical representations, disrespectful imagery, culturally insensitive, misleading visuals, harmful narratives, unbalanced perspectives, low-quality depictions, chaotic representations, unrecognizable subjects, excessive noise, unrealistic behaviors, distorted realities, bad intentions, confusing messages",
+      "Nature": "poorly depicted landscapes, unnatural colors, distorted elements, chaotic arrangement, missing details, low quality, pixelated images, unrealistic flora and fauna, bad lighting, excessive noise, glitchy visuals, unrecognizable scenes, awkward compositions, bad textures, confusing patterns, excessive clutter, unnatural proportions, unrealistic behaviors, poorly rendered, chaotic environments",
+      "Food": "unappetizing appearance, distorted shapes, bad textures, unrealistic colors, low quality, pixelated images, poorly arranged, excessive noise, chaotic presentation, strange ingredients, unrecognizable dishes, awkward proportions, bad lighting, glitchy visuals, messy layouts, confusing designs, unnatural combinations, unidentifiable items, excessive clutter, poorly executed",
+      "Vehicles": "unrealistic designs, distorted shapes, bad proportions, low quality, pixelated details, chaotic layouts, awkward angles, missing features, glitchy visuals, excessive noise, unrecognizable models, poorly rendered, bad lighting, confusing designs, excessive clutter, unnatural colors, awkward placements, poorly executed, strange textures, unidentifiable vehicles",
+      "Fantasy Creatures": "poorly designed, distorted features, bad anatomy, unrealistic colors, low quality, pixelated images, awkward poses, missing limbs, glitchy visuals, chaotic designs, unrecognizable species, excessive noise, strange textures, bad lighting, unnatural expressions, cloned creatures, unrealistic behaviors, awkward proportions, poorly rendered, confusing designs"
+    };
+
+    function displayNegativeButtons() {
+      const negativeButtonsContainer = document.getElementById('negative-buttons');
+      negativeButtonsContainer.innerHTML = '';
+      Object.keys(negativePrompts).forEach(prompt => {
+        const button = document.createElement('button');
+        button.textContent = prompt;
+        button.className = 'negative-btn';
+        button.onclick = () => {
+          document.getElementById('negative-prompt').value = negativePrompts[prompt];
+          hideNegativeButtons();
+        };
+        negativeButtonsContainer.appendChild(button);
+      });
+    }
+
+    function hideNegativeButtons() {
+      document.getElementById('negative-buttons').innerHTML = '';
+    }
+
+    document.getElementById('negative-prompt').addEventListener('input', function() {
+      if (this.value.trim() === '') {
+        displayNegativeButtons();
+      } else {
+        hideNegativeButtons();
+      }
+    });
+
+    // Call this function on page load to display the negative buttons initially
+    displayNegativeButtons();
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const expandOptionsBtn = document.getElementById('expand-options-btn');
+      const advancedOptionsContainer = document.getElementById('advanced-options-container');
+
+      // Start expanded
+      advancedOptionsContainer.classList.add('expanded');
+      expandOptionsBtn.textContent = 'Collapse Options';
+
+      expandOptionsBtn.addEventListener('click', function() {
+        advancedOptionsContainer.classList.toggle('expanded');
+        if (advancedOptionsContainer.classList.contains('expanded')) {
+          expandOptionsBtn.textContent = 'Collapse Options';
+        } else {
+          expandOptionsBtn.textContent = 'Expand Options';
+        }
+      });
+    });
+  </script>
+</body></html>
