@@ -1,34 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的网站</title>
+    <title>我的个人网站</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>你好</h1>
-        <nav>
+        <nav class="container">
+            <div id="logo">我的网站</div>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于我</a></li>
+                
             </ul>
         </nav>
     </header>
+
     <main>
-        <section>
-            <center><h2><font size="5"><a href="https://yyqsb.github.io/match-three-game/"target="_blank">消消乐</a></font></h2></center> 
-            <center><h2><font size="5"><a href="https://yyqsb.github.io/snake-game/"target="_blank">贪吃蛇</a></font></h2></center>
-            <center><h2><font size="5"><a href="https://yyqsb.github.io/Picture/"target="_blank">图片</a></font></h2></center>
-            <center><h2><font size="5"><a href="https://yyqsb.github.io/Files/"target="_blank">文件</a></font></h2></center>
-            <center><h2><font size="5"><a href="https://yyqsb.github.io/Music/"target="_blank">音乐</a></font></h2></cente>
-            <center><body background="background.jpg"style=" background-repeat:no-repeat ;background-size:100% 100%;background-attachment: fixed;">
-        </section>
+        <div class="content-wrapper">
+            <div class="content">
+                <section id="about">
+                    <h2>关于我</h2>
+                    <p>这里是您的个人简介摘要...</p>
+                </section>
+                <section id="latest-posts">
+                    <h2>最新动态</h2>
+                    <article>
+                        <h3>文章标题</h3>
+                        <p>文章摘要...</p>
+                    </article>
+                </section>
+            </div>
+            <aside class="sidebar">
+                <div id="important-links">
+                    <h2>重要链接</h2>
+                    <div class="link-buttons">
+                        <a href="https://github.com/yyqsb/yyqsb.github.io" class="link-button">我的GitHub仓库</a>
+                        <a href="./Files/index.html" class="link-button">我的文件</a>
+                        <a href="./Music/index.html" class="link-button">音乐</a>
+                        <a href="./Picture/index.html" class="link-button">图库</a>
+                        <a href="./snake-game/index.html" class="link-button">贪吃蛇游戏</a>
+                        <a href="./match-three-game/index.html" class="link-button">消消乐游戏</a>
+                    </div>
+                </div>
+                <div id="ai-chat">
+                    <h2>AI助手</h2>
+                    <div id="chat-messages"></div>
+                    <div class="chat-input">
+                        <input type="text" id="user-input" placeholder="输入您的问题...">
+                        <button id="send-button">发送</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
     </main>
+
     <footer>
-        <p>&copy; 2024 My Website</p>
+        <div class="container">
+            <div class="social-icons">
+                <!-- 添加社交媒体图标 -->
+            </div>
+            <p>&copy; 2024 您的名字. 保留所有权利。</p>
+        </div>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
