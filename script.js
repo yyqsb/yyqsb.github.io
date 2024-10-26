@@ -3,12 +3,16 @@ let currentSlide = 0;
 const slides = document.querySelectorAll('.carousel-item');
 
 function showSlide(n) {
-    slides[currentSlide].classList.remove('active');
-    currentSlide = (n + slides.length) % slides.length;
-    slides[currentSlide].classList.add('active');
+    if (slides.length > 0) {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }
 }
 
-setInterval(() => showSlide(currentSlide + 1), 5000); // 每5秒切换一次
+if (slides.length > 0) {
+    setInterval(() => showSlide(currentSlide + 1), 5000); // 每5秒切换一次
+}
 
 // AI聊天功能
 const chatMessages = document.getElementById('chat-messages');
@@ -63,5 +67,65 @@ sendButton.addEventListener('click', async () => {
 userInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendButton.click();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const articleList = document.getElementById('article-list');
+
+    console.log('开始加载文章...');
+    fetch('1.md')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(markdown => {
+            const article = parseArticle(markdown);
+            displayArticle(article);
+        })
+        .catch(error => {
+            console.error('加载文章失败:', error);
+            const errorElement = document.createElement('p');
+            errorElement.textContent = `加载文章失败: ${error.message}`;
+            articleList.appendChild(errorElement);
+        });
+
+    function parseArticle(markdown) {
+        const lines = markdown.split('\n');
+        const title = lines[0].replace(/^#\s+/, '');
+        const content = lines.slice(1).join('\n');
+        return { title, content };
+    }
+
+    function displayArticle(article) {
+        const articleElement = document.createElement('article');
+        const previewContent = article.content.length > 200 ? article.content.substring(0, 200) + '...' : article.content;
+        articleElement.innerHTML = `
+            <h3>${article.title}</h3>
+            <p class="article-preview">${marked.parse(previewContent)}</p>
+            <p class="full-content" style="display: none;">${marked.parse(article.content)}</p>
+            <a href="#" class="read-more">阅读更多</a>
+        `;
+        articleList.appendChild(articleElement);
+        console.log('文章已添加:', article.title);
+
+        const readMoreLink = articleElement.querySelector('.read-more');
+        const preview = articleElement.querySelector('.article-preview');
+        const fullContent = articleElement.querySelector('.full-content');
+
+        readMoreLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (preview.style.display !== 'none') {
+                preview.style.display = 'none';
+                fullContent.style.display = 'block';
+                readMoreLink.textContent = '收起';
+            } else {
+                preview.style.display = 'block';
+                fullContent.style.display = 'none';
+                readMoreLink.textContent = '阅读更多';
+            }
+        });
     }
 });

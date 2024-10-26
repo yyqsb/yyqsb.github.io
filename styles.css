@@ -210,3 +210,44 @@ p {
 .link-button:hover {
     background-color: #3a7bc8;
 }
+
+#articles {
+    margin-bottom: 2rem;
+}
+
+#article-list article {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+#article-list h3 {
+    color: #4a90e2;
+    margin-bottom: 0.5rem;
+}
+
+#article-list .article-preview,
+#article-list .full-content {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+#article-list .read-more {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#article-list .read-more:hover {
+    text-decoration: underline;
+}
+
+.read-more {
+    display: inline-block;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.read-more:hover {
+    text-decoration: underline;
+}

@@ -6,6 +6,8 @@
     <title>我的个人网站</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- 添加 Marked.js 库用于解析 Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <header>
@@ -26,12 +28,11 @@
                     <h2>关于我</h2>
                     <p>这里是您的个人简介摘要...</p>
                 </section>
-                <section id="latest-posts">
-                    <h2>最新动态</h2>
-                    <article>
-                        <h3>文章标题</h3>
-                        <p>文章摘要...</p>
-                    </article>
+                <section id="articles">
+                    <h2>文章列表</h2>
+                    <div id="article-list">
+                        <!-- 文章列表将通过 JavaScript 动态加载 -->
+                    </div>
                 </section>
             </div>
             <aside class="sidebar">
@@ -42,9 +43,8 @@
                         <a href="./Files/index.html" class="link-button">我的文件</a>
                         <a href="./Music/index.html" class="link-button">音乐</a>
                         <a href="./Picture/index.html" class="link-button">图库</a>
-                        <a href="./snake-game/index.html" class="link-button">贪吃蛇游戏<a href="./match-three-game/index.html" class="link-button">消消乐游戏</a>
+                        <a href="./snake-game/index.html" class="link-button">贪吃蛇游戏</a>
                         <a href="./match-three-game/index.html" class="link-button">消消乐游戏</a>
-                        <a href="https://vape.yyqsb.us.kg/dca1b6fb-9907-409b-a3b6-b3982fcfa0b1" class="link-button">VPN</a>
                     </div>
                 </div>
                 <div id="ai-chat">
